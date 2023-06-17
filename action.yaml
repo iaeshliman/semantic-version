@@ -5,5 +5,5 @@ outputs:
     version:
         description: 'New semantic version'
 runs:
-    using: 'node18'
+    using: 'node16'
     main: 'dist/index.js'
