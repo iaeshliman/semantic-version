@@ -1,0 +1,9 @@
+name: 'Semantic Version'
+description: 'Determine the semantic version bump using conventional commit standards'
+author: 'Isaac Aeshliman'
+outputs:
+    version:
+        description: 'New semantic version'
+runs:
+    using: 'node18'
+    main: 'dist/index.js'
