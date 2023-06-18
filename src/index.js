@@ -1,18 +1,21 @@
 const core = require('@actions/core')
 const exec = require('@actions/exec')
 
-try {
-    console.log('running action')
+async function main() {
+    try {
+        console.log('running action')
 
-    console.log('pre await')
-    const result = await execute('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
-    console.log('post await')
-    console.log(result)
+        console.log('pre await')
+        const result = await execute('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        console.log('post await')
+        console.log(result)
 
-    core.setOutput('version', 'v0.0.0')
-} catch (error) {
-    core.setFailed(error.message)
+        core.setOutput('version', 'v0.0.0')
+    } catch (error) {
+        core.setFailed(error.message)
+    }
 }
+main()
 
 async function execute(cmd, args) {
     let output = ''
