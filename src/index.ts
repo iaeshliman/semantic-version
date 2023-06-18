@@ -1,11 +1,14 @@
 import * as core from '@actions/core'
-import * as exec from '@actions/exec'
+import { exec } from './exec-helper'
 
 async function main(): Promise<void> {
     try {
         console.log('Testing github actions')
 
-        await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        // await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        const result = await exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        console.log('result:')
+        console.log(result)
     } catch (error: unknown) {
         console.error(error)
         core.setFailed(`${(error as any)?.message ?? error}`)
