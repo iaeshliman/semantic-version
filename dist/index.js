@@ -4025,21 +4025,13 @@ function main() {
             // DEBUG: print values
             console.log('Result:', result, '\nTag:', tag);
             // Get all commits since last tag
-            // result = await exec('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false })
-            // const commits = result
-            //     .trim()
-            //     .split('\n')
-            //     .map((e) => e.trim())
-            // DEBUG: print values
-            // console.log('Result:', result, '\nCommits:', commits)
-            // Get all commits
-            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h %d %s"']);
-            const allCommits = result
+            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false });
+            const commits = result
                 .trim()
                 .split('\n')
                 .map((e) => e.trim());
             // DEBUG: print values
-            console.log('Result:', result, '\nAll Commits:', allCommits);
+            console.log('Result:', result, '\nCommits:', commits);
         }
         catch (error) {
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);
