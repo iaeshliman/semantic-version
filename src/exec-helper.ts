@@ -6,13 +6,10 @@ export async function exec(cmd: string, args?: string[], options?: ExecOptions):
 
     if (options == undefined) options = {}
     options.listeners = {
-        stdout: (data: Buffer) => {
-            output += data.toString()
-        },
-        stderr: (data: Buffer) => {
-            error += data.toString()
-        },
+        stdout: (data: Buffer) => (output += data.toString()),
+        stderr: (data: Buffer) => (error += data.toString()),
     }
+    options.silent = true
 
     await execute(cmd, args, options)
 
