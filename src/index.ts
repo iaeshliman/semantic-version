@@ -1,5 +1,5 @@
-import core from '@actions/core'
-import exec from '@actions/exec'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 
 async function main(): Promise<void> {
     try {
@@ -7,6 +7,7 @@ async function main(): Promise<void> {
 
         await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
     } catch (error: unknown) {
+        console.error(error)
         core.setFailed(`${(error as any)?.message ?? error}`)
     }
 }
