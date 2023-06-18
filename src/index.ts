@@ -13,17 +13,17 @@ async function main(): Promise<void> {
         console.log('Result:', result, '\nTag:', tag)
 
         // Get all commits since last tag
-        result = await exec('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false })
-        const commits = result
-            .trim()
-            .split('\n')
-            .map((e) => e.trim())
+        // result = await exec('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false })
+        // const commits = result
+        //     .trim()
+        //     .split('\n')
+        //     .map((e) => e.trim())
 
         // DEBUG: print values
         console.log('Result:', result, '\nCommits:', commits)
 
         // Get all commits
-        result = await exec('git', ['log', '--format="%h"'])
+        result = await exec('git', ['log', '--format="%h %d %s"'])
         const allCommits = result
             .trim()
             .split('\n')
