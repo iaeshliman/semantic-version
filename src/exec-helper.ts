@@ -10,6 +10,8 @@ export async function exec(cmd: string, args?: string[], options?: ExecOptions):
         stderr: (data: Buffer) => (error += data.toString()),
     }
 
+    await execute(cmd, args, options)
+
     if (error !== '') throw new Error(error)
     return output
 }
