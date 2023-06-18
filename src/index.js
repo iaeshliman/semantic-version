@@ -4,8 +4,9 @@ const exec = require('@actions/exec')
 try {
     console.log('running action')
 
+    console.log('pre await')
     const result = await execute('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
-    console.log('reached this stage')
+    console.log('post await')
     console.log(result)
 
     core.setOutput('version', 'v0.0.0')

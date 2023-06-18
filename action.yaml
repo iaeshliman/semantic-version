@@ -1,5 +1,5 @@
-name: 'Semantic Version'
-description: 'Determine the semantic version bump using conventional commit standards'
+name: 'Conventional Commit'
+description: 'Analyze commits to generate a changelog as well as determine the version change type'
 author: 'Isaac Aeshliman'
 outputs:
     version:
