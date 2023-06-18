@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nom run build
+npm run build
 git add -A
 git commit -s -m "wip: test"
 git push
