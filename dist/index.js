@@ -4018,47 +4018,24 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log('Testing github actions');
-            const result = yield (0, exec_helper_1.exec)('git', ['tag', '--sort=-v:refname', '-l', 'v*']);
-            console.log(result);
-            yield (0, exec_helper_1.exec)('git', ['tags']);
+            // Get latest tag
+            let result = yield (0, exec_helper_1.exec)('git', ['tag', '--sort=-v:refname', '-l', 'v*']);
+            const tag = result.trim().split('\n')[0].trim();
+            // Get all commits since last tag
+            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`]);
+            const commits = result
+                .trim()
+                .split('\n')
+                .map((e) => e.trim());
+            // DEBUG: print values
+            console.log(commits);
         }
         catch (error) {
-            console.error(error);
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);
         }
     });
 }
 main();
-// async function main() {
-//     try {
-//         console.log('running action')
-//         console.log('pre await')
-//         // await execute('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
-//         // await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
-//         await exec.exec('git', ['tag'])
-//         console.log('post await')
-//         core.setOutput('version', 'v0.0.0')
-//     } catch (error) {
-//         core.setFailed(error.message)
-//     }
-// }
-// main()
-// async function execute() {
-//     let output = ''
-//     let error = ''
-//     const options = {}
-//     options.listeners = {
-//         stdout: (data) => {
-//             output += data.toString()
-//         },
-//         stderr: (data) => {
-//             error += data.toString()
-//         },
-//     }
-//     await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'], options)
-//     console.log(output)
-//     console.log(error)
-// }
 /**
  *  Command to execute
  *
@@ -4068,6 +4045,14 @@ main();
  *  Will return the logs of each commit between two (excludes the first commit includes the second commit)
  *  `git log --oneline commit..commit`
  *
+ *  Will return just the commits between the given tag and the head of the branch
+ *  `git log --format="%h" tag..HEAD`
+ *
+ *
+ *  Steps:
+ *      - get all tags
+ *      - find most recent version tag
+ *      - find commits
  */
 
 
