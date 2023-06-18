@@ -7,7 +7,8 @@ async function main() {
 
         console.log('pre await')
         // await execute('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
-        await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        // await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        await exec.exec('git', ['branch'])
         console.log('post await')
 
         core.setOutput('version', 'v0.0.0')
