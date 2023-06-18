@@ -4025,7 +4025,7 @@ function main() {
             // DEBUG: print values
             console.log('Result:', result, '\nTag:', tag);
             // Get all commits since last tag
-            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `"${tag}"..HEAD`], { silent: false });
+            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false });
             const commits = result
                 .trim()
                 .split('\n')
