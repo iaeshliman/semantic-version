@@ -4021,6 +4021,8 @@ function main() {
             // Get latest tag
             let result = yield (0, exec_helper_1.exec)('git', ['tag', '--sort=-v:refname', '-l', 'v*']);
             const tag = result.trim().split('\n')[0].trim();
+            // DEBUG: print values
+            console.log('Result:', result, '\nTag:', tag);
             // Get all commits since last tag
             result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`]);
             const commits = result
@@ -4028,7 +4030,7 @@ function main() {
                 .split('\n')
                 .map((e) => e.trim());
             // DEBUG: print values
-            console.log(commits);
+            console.log('Result:', result, '\nCommits:', commits);
         }
         catch (error) {
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);

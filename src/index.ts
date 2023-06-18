@@ -9,6 +9,9 @@ async function main(): Promise<void> {
         let result = await exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
         const tag = result.trim().split('\n')[0].trim()
 
+        // DEBUG: print values
+        console.log('Result:', result, '\nTag:', tag)
+
         // Get all commits since last tag
         result = await exec('git', ['log', '--format="%h"', `${tag}..HEAD`])
         const commits = result
@@ -17,7 +20,7 @@ async function main(): Promise<void> {
             .map((e) => e.trim())
 
         // DEBUG: print values
-        console.log(commits)
+        console.log('Result:', result, '\nCommits:', commits)
     } catch (error: unknown) {
         core.setFailed(`${(error as any)?.message ?? error}`)
     }
