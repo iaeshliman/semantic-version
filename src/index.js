@@ -4,10 +4,11 @@ const exec = require('@actions/exec')
 
 try {
     console.log('running action')
-    core.setOutput('version', 'v0.0.0')
 
     const result = await execute('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
     console.log(result)
+
+    core.setOutput('version', 'v0.0.0')
 } catch (error) {
     core.setFailed(error.message)
 }
