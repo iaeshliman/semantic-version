@@ -3958,8 +3958,12 @@ function exec(cmd, args, options) {
         if (options == undefined)
             options = {};
         options.listeners = {
-            stdout: (data) => (output += data.toString()),
-            stderr: (data) => (error += data.toString()),
+            stdout: (data) => {
+                output += data.toString();
+            },
+            stderr: (data) => {
+                error += data.toString();
+            },
         };
         yield (0, exec_1.exec)(cmd, args, options);
         if (error !== '')
