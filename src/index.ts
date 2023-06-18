@@ -21,6 +21,16 @@ async function main(): Promise<void> {
 
         // DEBUG: print values
         console.log('Result:', result, '\nCommits:', commits)
+
+        // Get all commits
+        result = await exec('git', ['log', '--format="%h"'])
+        const allCommits = result
+            .trim()
+            .split('\n')
+            .map((e) => e.trim())
+
+        // DEBUG: print values
+        console.log('Result:', result, '\nAll Commits:', allCommits)
     } catch (error: unknown) {
         core.setFailed(`${(error as any)?.message ?? error}`)
     }

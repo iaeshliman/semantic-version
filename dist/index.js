@@ -4032,6 +4032,14 @@ function main() {
                 .map((e) => e.trim());
             // DEBUG: print values
             console.log('Result:', result, '\nCommits:', commits);
+            // Get all commits
+            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"']);
+            const allCommits = result
+                .trim()
+                .split('\n')
+                .map((e) => e.trim());
+            // DEBUG: print values
+            console.log('Result:', result, '\nAll Commits:', allCommits);
         }
         catch (error) {
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);
