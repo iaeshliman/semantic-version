@@ -4018,10 +4018,9 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log('Testing github actions');
-            // await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
             const result = yield (0, exec_helper_1.exec)('git', ['tag', '--sort=-v:refname', '-l', 'v*']);
-            console.log('result:');
             console.log(result);
+            yield (0, exec_helper_1.exec)('git', ['tags']);
         }
         catch (error) {
             console.error(error);
