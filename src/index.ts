@@ -1,8 +1,11 @@
 import core from '@actions/core'
+import exec from '@actions/exec'
 
 async function main(): Promise<void> {
     try {
         console.log('Testing github actions')
+
+        await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
     } catch (error: unknown) {
         core.setFailed(`${(error as any)?.message ?? error}`)
     }
