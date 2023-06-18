@@ -4025,15 +4025,15 @@ function main() {
             // DEBUG: print values
             console.log('Result:', result, '\nTag:', tag);
             // Get all commits since last tag
-            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false });
-            const commits = result
-                .trim()
-                .split('\n')
-                .map((e) => e.trim());
+            // result = await exec('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false })
+            // const commits = result
+            //     .trim()
+            //     .split('\n')
+            //     .map((e) => e.trim())
             // DEBUG: print values
-            console.log('Result:', result, '\nCommits:', commits);
+            // console.log('Result:', result, '\nCommits:', commits)
             // Get all commits
-            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"']);
+            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h %d %s"']);
             const allCommits = result
                 .trim()
                 .split('\n')

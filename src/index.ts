@@ -20,7 +20,7 @@ async function main(): Promise<void> {
         //     .map((e) => e.trim())
 
         // DEBUG: print values
-        console.log('Result:', result, '\nCommits:', commits)
+        // console.log('Result:', result, '\nCommits:', commits)
 
         // Get all commits
         result = await exec('git', ['log', '--format="%h %d %s"'])
