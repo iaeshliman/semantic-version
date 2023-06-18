@@ -6,9 +6,9 @@ async function main() {
         console.log('running action')
 
         console.log('pre await')
-        const result = await execute('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        // await execute('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        await execute()
         console.log('post await')
-        console.log(result)
 
         core.setOutput('version', 'v0.0.0')
     } catch (error) {
@@ -17,7 +17,7 @@ async function main() {
 }
 main()
 
-async function execute(cmd, args) {
+async function execute() {
     let output = ''
     let error = ''
 
@@ -31,10 +31,10 @@ async function execute(cmd, args) {
         },
     }
 
-    await exec.exec(cmd, args, options)
+    await exec.exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'], options)
 
-    if (error !== '') throw new Error(error)
-    return output
+    console.log(output)
+    console.log(error)
 }
 
 /**
