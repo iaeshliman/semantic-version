@@ -3952,6 +3952,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.exec = void 0;
 const exec_1 = __nccwpck_require__(514);
 function exec(cmd, args, options) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         let output = '';
         let error = '';
@@ -3961,7 +3962,7 @@ function exec(cmd, args, options) {
             stdout: (data) => (output += data.toString()),
             stderr: (data) => (error += data.toString()),
         };
-        options.silent = true;
+        (_a = options.silent) !== null && _a !== void 0 ? _a : (options.silent = true);
         yield (0, exec_1.exec)(cmd, args, options);
         if (error !== '')
             throw new Error(error);
@@ -4024,7 +4025,7 @@ function main() {
             // DEBUG: print values
             console.log('Result:', result, '\nTag:', tag);
             // Get all commits since last tag
-            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`]);
+            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false });
             const commits = result
                 .trim()
                 .split('\n')

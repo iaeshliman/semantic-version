@@ -9,7 +9,7 @@ export async function exec(cmd: string, args?: string[], options?: ExecOptions):
         stdout: (data: Buffer) => (output += data.toString()),
         stderr: (data: Buffer) => (error += data.toString()),
     }
-    options.silent = true
+    options.silent ??= true
 
     await execute(cmd, args, options)
 
