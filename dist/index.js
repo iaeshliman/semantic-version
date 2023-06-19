@@ -3934,6 +3934,73 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 645:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Commit = void 0;
+class Commit {
+    constructor(commit) {
+        this.breaking = false;
+        const sections = commit
+            .trim()
+            .split('\n\n')
+            .map((e) => e.trim());
+        // parse title
+        const { type, scope, description, breaking: brkTitle } = this.parseTitle(sections[0]);
+        this.type = type;
+        this.scope = scope;
+        this.description = description;
+        if (brkTitle)
+            this.breaking = true;
+        // parse body and footers
+        const { paragraphs, footers, breaking: brkFooter } = this.parseBody(sections.slice(1).join('\n\n'));
+        this.paragraphs = paragraphs;
+        this.footers = footers;
+        if (brkFooter)
+            this.breaking = true;
+    }
+    /**
+     * Parse commit title using regex
+     * Extract the type, scope, description, and breaking change status
+     * @param title
+     * @returns
+     */
+    parseTitle(title) {
+        const match = title.match(/^(?<type>\w+)(?:\((?<scope>\w+)\))?(?<breaking>!)?:\s.+$/);
+        if (match == null || match.groups == null)
+            throw new Error('could not parse commit title');
+        return {
+            type: match.groups.type,
+            scope: match.groups.scope,
+            description: match.groups.description,
+            breaking: match.groups.breaking != undefined,
+        };
+    }
+    parseBody(body) {
+        let footers = [];
+        const matches = body.match(/^[\w-]+(?::\s|\s#).+$/gm);
+        if (matches != null)
+            footers = matches;
+        const paragraphs = body
+            .split(footers.join('\n'))[0]
+            .split('\n\n')
+            .map((e) => e.trim());
+        footers = footers.map((e) => e.trim());
+        return {
+            paragraphs: paragraphs,
+            footers: footers,
+            breaking: footers.some((footer) => footer.startsWith('BREAKING CHANGE')),
+        };
+    }
+}
+exports.Commit = Commit;
+
+
+/***/ }),
+
 /***/ 782:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -4014,6 +4081,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const exec_helper_1 = __nccwpck_require__(782);
+const commit_helper_1 = __nccwpck_require__(645);
 function main() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -4046,7 +4114,8 @@ function main() {
 function analyzeCommit(hash) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`analyzing commit ${hash}`);
-        const commit = yield (0, exec_helper_1.exec)('git', ['log', '--format=%B', '-n', '1', hash]);
+        const result = yield (0, exec_helper_1.exec)('git', ['log', '--format=%B', '-n', '1', hash]);
+        const commit = new commit_helper_1.Commit(result);
         console.log(commit);
     });
 }

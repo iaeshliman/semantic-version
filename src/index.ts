@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import { exec } from './exec-helper'
+import { Commit } from './commit-helper'
 
 async function main(): Promise<void> {
     try {
@@ -35,7 +36,8 @@ async function main(): Promise<void> {
 async function analyzeCommit(hash: string): Promise<void> {
     console.log(`analyzing commit ${hash}`)
 
-    const commit = await exec('git', ['log', '--format=%B', '-n', '1', hash])
+    const result = await exec('git', ['log', '--format=%B', '-n', '1', hash])
+    const commit = new Commit(result)
 
     console.log(commit)
 }
