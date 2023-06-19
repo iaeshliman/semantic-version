@@ -39,6 +39,9 @@ async function analyzeCommit(hash: string): Promise<void> {
     const result = await exec('git', ['log', '--format=%B', '-n', '1', hash])
     const commit = new Commit(result)
 
+    console.log('Commit Raw:')
+    console.log(result)
+    console.log('Commit parsed')
     console.log(commit)
 }
 

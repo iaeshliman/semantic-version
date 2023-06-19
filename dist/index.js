@@ -4116,6 +4116,9 @@ function analyzeCommit(hash) {
         console.log(`analyzing commit ${hash}`);
         const result = yield (0, exec_helper_1.exec)('git', ['log', '--format=%B', '-n', '1', hash]);
         const commit = new commit_helper_1.Commit(result);
+        console.log('Commit Raw:');
+        console.log(result);
+        console.log('Commit parsed');
         console.log(commit);
     });
 }
