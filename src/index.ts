@@ -13,7 +13,7 @@ async function main(): Promise<void> {
         console.log('Result:\n', result, '\nTag:\n', tag)
 
         // Get all commit hashes since last tag
-        result = await exec('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false })
+        result = await exec('git', ['log', '--format=%h', `${tag}..HEAD`], { silent: false })
         const hashes = result
             .trim()
             .split('\n')
