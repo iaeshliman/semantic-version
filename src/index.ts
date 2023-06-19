@@ -35,7 +35,7 @@ async function main(): Promise<void> {
 async function analyzeCommit(hash: string): Promise<void> {
     console.log(`analyzing commit ${hash}`)
 
-    const commit = await exec('git', ['log', '--format="%B"', '-n', '1', hash])
+    const commit = await exec('git', ['log', '--format=%B', '-n', '1', hash])
 
     console.log(commit)
 }

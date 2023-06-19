@@ -4046,7 +4046,7 @@ function main() {
 function analyzeCommit(hash) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`analyzing commit ${hash}`);
-        const commit = yield (0, exec_helper_1.exec)('git', ['log', '--format="%B"', '-n', '1', hash]);
+        const commit = yield (0, exec_helper_1.exec)('git', ['log', '--format=%B', '-n', '1', hash]);
         console.log(commit);
     });
 }
