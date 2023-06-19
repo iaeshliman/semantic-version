@@ -4025,7 +4025,7 @@ function main() {
             // DEBUG: print values
             console.log('Result:\n', result, '\nTag:\n', tag);
             // Get all commit hashes since last tag
-            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`]);
+            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false });
             const hashes = result
                 .trim()
                 .split('\n')
