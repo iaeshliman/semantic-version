@@ -4038,6 +4038,7 @@ function main() {
             }
         }
         catch (error) {
+            console.error(error);
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);
         }
     });

@@ -27,6 +27,7 @@ async function main(): Promise<void> {
             await analyzeCommit(hash)
         }
     } catch (error: unknown) {
+        console.error(error)
         core.setFailed(`${(error as any)?.message ?? error}`)
     }
 }
