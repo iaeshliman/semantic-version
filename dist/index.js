@@ -4024,18 +4024,29 @@ function main() {
             const tag = result.trim().split('\n')[0].trim();
             // DEBUG: print values
             console.log('Result:', result, '\nTag:', tag);
-            // Get all commits since last tag
-            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false });
-            const commits = result
+            // Get all commit hashes since last tag
+            result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`]);
+            const hashes = result
                 .trim()
                 .split('\n')
                 .map((e) => e.trim());
             // DEBUG: print values
-            console.log('Result:', result, '\nCommits:', commits);
+            console.log('Result:', result, '\nCommits:', hashes);
+            // Iterate over each hash
+            for (const hash of hashes) {
+                yield analyzeCommit(hash);
+            }
         }
         catch (error) {
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);
         }
+    });
+}
+function analyzeCommit(hash) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`analyzing commit ${hash}`);
+        const commit = yield (0, exec_helper_1.exec)('git', ['log', '--format="%B"', '-n', '1', hash]);
+        console.log(commit);
     });
 }
 main();

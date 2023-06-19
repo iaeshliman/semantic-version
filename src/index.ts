@@ -12,18 +12,31 @@ async function main(): Promise<void> {
         // DEBUG: print values
         console.log('Result:', result, '\nTag:', tag)
 
-        // Get all commits since last tag
-        result = await exec('git', ['log', '--format="%h"', `${tag}..HEAD`], { silent: false })
-        const commits = result
+        // Get all commit hashes since last tag
+        result = await exec('git', ['log', '--format="%h"', `${tag}..HEAD`])
+        const hashes = result
             .trim()
             .split('\n')
             .map((e) => e.trim())
 
         // DEBUG: print values
-        console.log('Result:', result, '\nCommits:', commits)
+        console.log('Result:', result, '\nCommits:', hashes)
+
+        // Iterate over each hash
+        for (const hash of hashes) {
+            await analyzeCommit(hash)
+        }
     } catch (error: unknown) {
         core.setFailed(`${(error as any)?.message ?? error}`)
     }
+}
+
+async function analyzeCommit(hash: string): Promise<void> {
+    console.log(`analyzing commit ${hash}`)
+
+    const commit = await exec('git', ['log', '--format="%B"', '-n', '1', hash])
+
+    console.log(commit)
 }
 
 main()
