@@ -2,7 +2,7 @@
 
 npm run build
 git add -A
-git commit -s -m "wip: test"
+git commit -s -m "wip: incremental change"
 git push
 
 git tag -d v0.1
