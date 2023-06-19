@@ -4023,7 +4023,7 @@ function main() {
             let result = yield (0, exec_helper_1.exec)('git', ['tag', '--sort=-v:refname', '-l', 'v*']);
             const tag = result.trim().split('\n')[0].trim();
             // DEBUG: print values
-            console.log('Result:', result, '\nTag:', tag);
+            console.log('Result:\n', result, '\nTag:\n', tag);
             // Get all commit hashes since last tag
             result = yield (0, exec_helper_1.exec)('git', ['log', '--format="%h"', `${tag}..HEAD`]);
             const hashes = result
@@ -4031,11 +4031,11 @@ function main() {
                 .split('\n')
                 .map((e) => e.trim());
             // DEBUG: print values
-            console.log('Result:', result, '\nCommits:', hashes);
+            console.log('Result:\n', result, '\nCommits:\n', hashes);
             // Iterate over each hash
-            for (const hash of hashes) {
-                yield analyzeCommit(hash);
-            }
+            // for (const hash of hashes) {
+            //     await analyzeCommit(hash)
+            // }
         }
         catch (error) {
             console.error(error);
