@@ -35,7 +35,7 @@ export class Commit {
      * @returns
      */
     private parseTitle(title: string): { type: string; scope?: string; description: string; breaking: boolean } {
-        const match = title.match(/^(?<type>\w+)(?:\((?<scope>\w+)\))?(?<breaking>!)?:\s.+$/)
+        const match = title.match(/^(?<type>\w+)(?:\((?<scope>\w+)\))?(?<breaking>!)?:\s(?<description>.+)$/)
         if (match == null || match.groups == null) throw new Error('could not parse commit title')
 
         return {
