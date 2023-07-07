@@ -4085,6 +4085,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const git_helper_1 = __nccwpck_require__(107);
+const version_helper_1 = __nccwpck_require__(481);
 function main() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -4107,26 +4108,13 @@ function main() {
             }
             // DEBUG
             console.log(commits);
-            // // Get latest tag
-            // let result = await exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
-            // const tag = result.trim().split('\n')[0].trim()
-            // // DEBUG: print values
-            // console.log('Result:', result, '\nTag:', tag)
-            // // Get all commit hashes since last tag
-            // result = await exec('git', ['log', '--format=%h', `${tag}..HEAD`], { silent: false })
-            // const hashes = result
-            //     .trim()
-            //     .split('\n')
-            //     .map((e) => e.trim())
-            // // DEBUG: print values
-            // console.log('Result:', result, '\nCommits:', hashes)
-            // // Iterate over each hash
-            // for (const hash of hashes) {
-            //     await analyzeCommit(hash)
-            // }
+            // Get bump type
+            const type = version_helper_1.Version.findBumpType(commits);
+            const version = version_helper_1.Version.bump(tag, type);
+            // DEBUG
+            console.log(`new version: ${version}`);
         }
         catch (error) {
-            console.error(error);
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);
         }
     });
@@ -4150,6 +4138,60 @@ main();
  *      - find most recent version tag
  *      - find commits
  */
+
+
+/***/ }),
+
+/***/ 481:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Version = void 0;
+exports.Version = {
+    bump(version, type = 'patch') {
+        var _a;
+        const match = version.match(/^(?<prefix>v)?(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)[-+]?/);
+        if (match === null || match.groups === undefined)
+            throw new Error(`invalid version format: ${version}`);
+        const prefix = (_a = match.groups.prefix) !== null && _a !== void 0 ? _a : '';
+        let major = Number(match.groups.major);
+        let minor = Number(match.groups.minor);
+        let patch = Number(match.groups.patch);
+        switch (type) {
+            case 'major':
+                major++;
+                minor = 0;
+                patch = 0;
+                break;
+            case 'minor':
+                minor++;
+                patch = 0;
+                break;
+            case 'patch':
+                patch++;
+                break;
+            default:
+                throw new Error(`unsupported bump type '${type}'`);
+        }
+        return `${prefix}${major}.${minor}.${patch}`;
+    },
+    findBumpType(commits, options = {}) {
+        var _a;
+        const minor = (_a = options.minor) !== null && _a !== void 0 ? _a : ['feat'];
+        let type = 'patch';
+        for (const commit of commits) {
+            if (commit.breaking)
+                type = 'major';
+            if (type === 'patch' && minor.includes(commit.type))
+                type = 'minor';
+            if (type === 'major')
+                break;
+        }
+        return type;
+    },
+};
 
 
 /***/ }),
