@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import { Git } from './git-helper'
+import { Version } from './version-helper'
 
 async function main(): Promise<void> {
     try {
@@ -25,29 +26,13 @@ async function main(): Promise<void> {
         // DEBUG
         console.log(commits)
 
-        // // Get latest tag
-        // let result = await exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
-        // const tag = result.trim().split('\n')[0].trim()
+        // Get bump type
+        const type = Version.findBumpType(commits)
+        const version = Version.bump(tag, type)
 
-        // // DEBUG: print values
-        // console.log('Result:', result, '\nTag:', tag)
-
-        // // Get all commit hashes since last tag
-        // result = await exec('git', ['log', '--format=%h', `${tag}..HEAD`], { silent: false })
-        // const hashes = result
-        //     .trim()
-        //     .split('\n')
-        //     .map((e) => e.trim())
-
-        // // DEBUG: print values
-        // console.log('Result:', result, '\nCommits:', hashes)
-
-        // // Iterate over each hash
-        // for (const hash of hashes) {
-        //     await analyzeCommit(hash)
-        // }
+        // DEBUG
+        console.log(`new version: ${version}`)
     } catch (error: unknown) {
-        console.error(error)
         core.setFailed(`${(error as any)?.message ?? error}`)
     }
 }
