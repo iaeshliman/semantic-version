@@ -4112,7 +4112,7 @@ function main() {
             const type = version_helper_1.Version.findBumpType(commits);
             const version = version_helper_1.Version.bump(tag, type);
             // DEBUG
-            console.log(`new version: ${version}`);
+            console.log(`old version ${tag}\nnew version: ${version}`);
         }
         catch (error) {
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);

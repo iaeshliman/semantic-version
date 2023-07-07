@@ -31,7 +31,7 @@ async function main(): Promise<void> {
         const version = Version.bump(tag, type)
 
         // DEBUG
-        console.log(`new version: ${version}`)
+        console.log(`old version ${tag}\nnew version: ${version}`)
     } catch (error: unknown) {
         core.setFailed(`${(error as any)?.message ?? error}`)
     }
