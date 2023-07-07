@@ -4084,8 +4084,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
-const exec_helper_1 = __nccwpck_require__(782);
-const commit_helper_1 = __nccwpck_require__(645);
 const git_helper_1 = __nccwpck_require__(107);
 function main() {
     var _a;
@@ -4131,17 +4129,6 @@ function main() {
             console.error(error);
             core.setFailed(`${(_a = error === null || error === void 0 ? void 0 : error.message) !== null && _a !== void 0 ? _a : error}`);
         }
-    });
-}
-function analyzeCommit(hash) {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log(`analyzing commit ${hash}`);
-        const result = yield (0, exec_helper_1.exec)('git', ['log', '--format=%B', '-n', '1', hash]);
-        const commit = new commit_helper_1.Commit(result);
-        console.log('Commit Raw:');
-        console.log(result);
-        console.log('Commit parsed');
-        console.log(commit);
     });
 }
 main();

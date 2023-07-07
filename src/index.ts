@@ -1,6 +1,4 @@
 import * as core from '@actions/core'
-import { exec } from './exec-helper'
-import { Commit } from './commit-helper'
 import { Git } from './git-helper'
 
 async function main(): Promise<void> {
@@ -52,18 +50,6 @@ async function main(): Promise<void> {
         console.error(error)
         core.setFailed(`${(error as any)?.message ?? error}`)
     }
-}
-
-async function analyzeCommit(hash: string): Promise<void> {
-    console.log(`analyzing commit ${hash}`)
-
-    const result = await exec('git', ['log', '--format=%B', '-n', '1', hash])
-    const commit = new Commit(result)
-
-    console.log('Commit Raw:')
-    console.log(result)
-    console.log('Commit parsed')
-    console.log(commit)
 }
 
 main()
