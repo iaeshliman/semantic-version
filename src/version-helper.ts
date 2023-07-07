@@ -1,5 +1,5 @@
 export const Version = {
-    bump(version: string, type: string) {
+    bump(version: string, type = 'patch') {
         const match = version.match(/^(?<prefix>v)?(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)[-+]?/)
         if (match === null || match.groups === undefined) throw new Error(`invalid version format: ${version}`)
 
