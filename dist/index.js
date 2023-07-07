@@ -3942,58 +3942,20 @@ exports["default"] = _default;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Commit = void 0;
 class Commit {
-    constructor(commit) {
-        this.breaking = false;
-        const sections = commit
+    constructor(raw) {
+        this.raw = raw;
+        // Extract first line of commit and parse
+        const match = raw
+            .split('\n')[0]
             .trim()
-            .split('\n\n')
-            .map((e) => e.trim());
-        // parse title
-        const { type, scope, description, breaking: brkTitle } = this.parseTitle(sections[0]);
-        this.type = type;
-        this.scope = scope;
-        this.description = description;
-        if (brkTitle)
+            .match(/^(?<type>[\w\s]+)(?:\([\w\s]+\))?(?<breaking>!)?: (?<description>.+)$/);
+        if (match === null || match.groups === undefined)
+            throw new Error('invalid commit format');
+        this.type = match.groups.type;
+        this.description = match.groups.description;
+        this.breaking = match.groups.breaking !== undefined;
+        if (/BREAKING CHANGE/.test(raw))
             this.breaking = true;
-        // parse body and footers
-        const { paragraphs, footers, breaking: brkFooter } = this.parseBody(sections.slice(1).join('\n\n'));
-        this.paragraphs = paragraphs;
-        this.footers = footers;
-        if (brkFooter)
-            this.breaking = true;
-    }
-    /**
-     * Parse commit title using regex
-     * Extract the type, scope, description, and breaking change status
-     * @param title
-     * @returns
-     */
-    parseTitle(title) {
-        const match = title.match(/^(?<type>\w+)(?:\((?<scope>\w+)\))?(?<breaking>!)?:\s(?<description>.+)$/);
-        if (match == null || match.groups == null)
-            throw new Error('could not parse commit title');
-        return {
-            type: match.groups.type,
-            scope: match.groups.scope,
-            description: match.groups.description,
-            breaking: match.groups.breaking != undefined,
-        };
-    }
-    parseBody(body) {
-        let footers = [];
-        const matches = body.match(/^[\w-]+(?::\s|\s#).+$/gm);
-        if (matches != null)
-            footers = matches;
-        const paragraphs = body
-            .split(footers.join('\n'))[0]
-            .split('\n\n')
-            .map((e) => e.trim());
-        footers = footers.map((e) => e.trim());
-        return {
-            paragraphs: paragraphs,
-            footers: footers,
-            breaking: footers.some((footer) => footer.startsWith('BREAKING CHANGE')),
-        };
     }
 }
 exports.Commit = Commit;
@@ -4041,6 +4003,48 @@ exports.exec = exec;
 
 /***/ }),
 
+/***/ 107:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Git = void 0;
+const commit_helper_1 = __nccwpck_require__(645);
+const exec_helper_1 = __nccwpck_require__(782);
+exports.Git = {
+    getTag() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const tags = yield (0, exec_helper_1.exec)('git', ['tag', '--sort=-v:refname', '-l', 'v*']);
+            return tags.split('\n')[0].trim();
+        });
+    },
+    getHashes(start, end = 'HEAD') {
+        return __awaiter(this, void 0, void 0, function* () {
+            const commits = yield (0, exec_helper_1.exec)('git', ['log', '--format=%h', `${start}..${end}`]);
+            return commits.split('\n').map((commit) => commit.trim());
+        });
+    },
+    getCommit(hash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const commit = yield (0, exec_helper_1.exec)('git', ['log', '--format=%B', '-n', '1', hash]);
+            return new commit_helper_1.Commit(commit);
+        });
+    },
+};
+
+
+/***/ }),
+
 /***/ 144:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -4082,28 +4086,46 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const exec_helper_1 = __nccwpck_require__(782);
 const commit_helper_1 = __nccwpck_require__(645);
+const git_helper_1 = __nccwpck_require__(107);
 function main() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log('Testing github actions');
+            // TODO: remove logging
+            console.log('test running semantic versioning action');
             // Get latest tag
-            let result = yield (0, exec_helper_1.exec)('git', ['tag', '--sort=-v:refname', '-l', 'v*']);
-            const tag = result.trim().split('\n')[0].trim();
-            // DEBUG: print values
-            console.log('Result:', result, '\nTag:', tag);
-            // Get all commit hashes since last tag
-            result = yield (0, exec_helper_1.exec)('git', ['log', '--format=%h', `${tag}..HEAD`], { silent: false });
-            const hashes = result
-                .trim()
-                .split('\n')
-                .map((e) => e.trim());
-            // DEBUG: print values
-            console.log('Result:', result, '\nCommits:', hashes);
-            // Iterate over each hash
+            const tag = yield git_helper_1.Git.getTag();
+            // Get all hashes
+            const hashes = yield git_helper_1.Git.getHashes(tag);
+            // Get all commits
+            const commits = [];
             for (const hash of hashes) {
-                yield analyzeCommit(hash);
+                try {
+                    commits.push(yield git_helper_1.Git.getCommit(hash));
+                }
+                catch (error) {
+                    console.warn(`commit ${hash}: ${error.message}`);
+                }
             }
+            // DEBUG
+            console.log(commits);
+            // // Get latest tag
+            // let result = await exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+            // const tag = result.trim().split('\n')[0].trim()
+            // // DEBUG: print values
+            // console.log('Result:', result, '\nTag:', tag)
+            // // Get all commit hashes since last tag
+            // result = await exec('git', ['log', '--format=%h', `${tag}..HEAD`], { silent: false })
+            // const hashes = result
+            //     .trim()
+            //     .split('\n')
+            //     .map((e) => e.trim())
+            // // DEBUG: print values
+            // console.log('Result:', result, '\nCommits:', hashes)
+            // // Iterate over each hash
+            // for (const hash of hashes) {
+            //     await analyzeCommit(hash)
+            // }
         }
         catch (error) {
             console.error(error);

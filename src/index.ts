@@ -1,32 +1,53 @@
 import * as core from '@actions/core'
 import { exec } from './exec-helper'
 import { Commit } from './commit-helper'
+import { Git } from './git-helper'
 
 async function main(): Promise<void> {
     try {
-        console.log('Testing github actions')
+        // TODO: remove logging
+        console.log('test running semantic versioning action')
 
         // Get latest tag
-        let result = await exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
-        const tag = result.trim().split('\n')[0].trim()
+        const tag = await Git.getTag()
 
-        // DEBUG: print values
-        console.log('Result:', result, '\nTag:', tag)
+        // Get all hashes
+        const hashes = await Git.getHashes(tag)
 
-        // Get all commit hashes since last tag
-        result = await exec('git', ['log', '--format=%h', `${tag}..HEAD`], { silent: false })
-        const hashes = result
-            .trim()
-            .split('\n')
-            .map((e) => e.trim())
-
-        // DEBUG: print values
-        console.log('Result:', result, '\nCommits:', hashes)
-
-        // Iterate over each hash
+        // Get all commits
+        const commits = []
         for (const hash of hashes) {
-            await analyzeCommit(hash)
+            try {
+                commits.push(await Git.getCommit(hash))
+            } catch (error: unknown) {
+                console.warn(`commit ${hash}: ${(error as Error).message}`)
+            }
         }
+
+        // DEBUG
+        console.log(commits)
+
+        // // Get latest tag
+        // let result = await exec('git', ['tag', '--sort=-v:refname', '-l', 'v*'])
+        // const tag = result.trim().split('\n')[0].trim()
+
+        // // DEBUG: print values
+        // console.log('Result:', result, '\nTag:', tag)
+
+        // // Get all commit hashes since last tag
+        // result = await exec('git', ['log', '--format=%h', `${tag}..HEAD`], { silent: false })
+        // const hashes = result
+        //     .trim()
+        //     .split('\n')
+        //     .map((e) => e.trim())
+
+        // // DEBUG: print values
+        // console.log('Result:', result, '\nCommits:', hashes)
+
+        // // Iterate over each hash
+        // for (const hash of hashes) {
+        //     await analyzeCommit(hash)
+        // }
     } catch (error: unknown) {
         console.error(error)
         core.setFailed(`${(error as any)?.message ?? error}`)
